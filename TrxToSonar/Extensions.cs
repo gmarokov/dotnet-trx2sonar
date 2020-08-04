@@ -9,6 +9,19 @@ namespace TrxToSonar
 {
     public static class Extensions
     {
+        private static readonly string[] SearchPatternFormats =
+        {
+            "{0}.cs",
+            "{0}Test.cs",
+            "{0}Tests.cs",
+            "{0}.vb",
+            "{0}Test.vb",
+            "{0}Tests.vb",
+            "{0}*"
+        };
+
+        private static readonly string TestProjectSignature = Path.Combine("Tests", "bin");
+
         public static UnitTest GetUnitTest(this UnitTestResult unitTestResult, TrxDocument trxDocument)
         {
             return trxDocument.TestDefinitions.FirstOrDefault(x => x.Id == unitTestResult.TestId);
@@ -30,25 +43,27 @@ namespace TrxToSonar
 
             string className = fullClassName.Split(".", StringSplitOptions.RemoveEmptyEntries)[^1];
 
-            string testProjectSignature = Path.Combine("Tests", "bin");
-            int indexOfSignature = unitTest.TestMethod.CodeBase.IndexOf(testProjectSignature, StringComparison.Ordinal);
+            int indexOfSignature = unitTest.TestMethod.CodeBase.IndexOf(TestProjectSignature, StringComparison.OrdinalIgnoreCase);
             string projectDirectory = unitTest.TestMethod.CodeBase.Substring(0, indexOfSignature + 6);
 
-            string[] files = Directory.GetFiles(projectDirectory, $"{className}.cs", SearchOption.AllDirectories);
+            string file =
+                SearchPatternFormats.Select(format => string.Format(format, className))
+                    .Select(searchPattern => Directory.GetFiles(projectDirectory, searchPattern, SearchOption.AllDirectories))
+                    .Where(files => files.Length > 0)
+                    .Select(files => files[0])
+                    .FirstOrDefault();
 
-            if (files.Length == 0)
+            if (string.IsNullOrEmpty(file))
             {
                 throw new FileNotFoundException($"Cannot find file with class {className}. Check that file has the same name as the class.");
             }
 
-            string result = files[0];
-
             if (!useAbsolutePath)
             {
-                result = result.Substring(solutionDirectory.Length + 1);
+                file = file.Substring(solutionDirectory.Length + 1);
             }
 
-            return result;
+            return file;
         }
     }
 }
