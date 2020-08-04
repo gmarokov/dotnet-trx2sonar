@@ -17,9 +17,15 @@ namespace TrxToSonar
                 return false;
             }
 
-            if (File.Exists(outputFilename))
+            var fileInfo = new FileInfo(outputFilename);
+
+            if (fileInfo.Exists)
             {
-                File.Delete(outputFilename);
+                fileInfo.Delete();
+            }
+            else if (fileInfo.Directory?.Exists == false)
+            {
+                fileInfo.Directory.Create();
             }
 
             File.WriteAllText(outputFilename, xmlContent);
