@@ -30,7 +30,7 @@ namespace TrxToSonar
 
             string className = fullClassName.Split(".", StringSplitOptions.RemoveEmptyEntries)[^1];
 
-            string testProjectSignature = Path.Combine(".Tests", "bin");
+            string testProjectSignature = Path.Combine("Tests", "bin");
             int indexOfSignature = unitTest.TestMethod.CodeBase.IndexOf(testProjectSignature, StringComparison.Ordinal);
             string projectDirectory = unitTest.TestMethod.CodeBase.Substring(0, indexOfSignature + 6);
 
