@@ -41,7 +41,7 @@ jobs:
         dotnet nuget add source https://nuget.pkg.github.com/${{ env.GITHUB_REPOSITORY_OWNER }}/index.json --name github
 
     - name: NuGet push on GitHub
-      run: dotnet nuget push "**/*.nupkg" --source github --api-key ${{ GH_PAT }} --skip-duplicate
+      run: dotnet nuget push "**/*.nupkg" --source github --api-key ${{ secrets.GH_PAT }} --skip-duplicate
 
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2
