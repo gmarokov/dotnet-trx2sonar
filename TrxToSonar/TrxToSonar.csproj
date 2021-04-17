@@ -14,7 +14,7 @@
     <Authors>Georgi Marokov</Authors>
     <Copyright>2021</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/gmarokov/trxtosonar</RepositoryUrl>
+    <RepositoryUrl>https://github.com/gmarokov/dotnet-trx2sonar</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />

@@ -1,10 +1,15 @@
-name: .NET Core
+name: Build .NET Core and Publish to GitHub/NuGet
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master ] # TODO: Trigger on master and tags
   pull_request:
     branches: [ master ]
+
+env:
+  NETCORE_VERSION: '3.1.x'
+  GITHUB_REPOSITORY_OWNER: 'gmarokov'
+  NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
 
 jobs:
   build:
@@ -13,16 +18,31 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '3.1.x'
+        dotnet-version: ${{ env.NETCORE_VERSION }}
+
     - name: Install dependencies
       run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+
     - name: Test
       run: dotnet test --no-restore --verbosity normal
-    - name: Build
+
+    - name: Pack
       run: dotnet pack --configuration Release --no-restore --output artifacts
+    
+    - name: Add NuGet sources
+      run: |
+        dotnet nuget add source https://nuget.pkg.github.com/${{ env.GITHUB_REPOSITORY_OWNER }}/index.json --name github
+
+    - name: NuGet push on GitHub
+      run: dotnet nuget push "**/*.nupkg" --source github --api-key ${{ GH_PAT }} --skip-duplicate
+
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2
       with:
@@ -30,3 +50,8 @@ jobs:
         name: artifacts
         # A file, directory or wildcard pattern that describes what to upload
         path: artifacts/*
+    
+    # - name: Install gpr
+    #   run: dotnet tool install gpr --global
+    # - name: gpr upload
+    #   run: find -name "*.nupkg" -print -exec gpr push -k ${{secrets.GH_PACKAGE}} {} \;
