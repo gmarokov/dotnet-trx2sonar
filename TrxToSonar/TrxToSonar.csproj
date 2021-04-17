@@ -11,10 +11,10 @@
       Tool for converting trx test results to the generic sonarqube format.
     </Description>
     <PackageId>Trx2Sonar</PackageId>
-    <Authors>Ryan McCafferty</Authors>
-    <Copyright>2019</Copyright>
+    <Authors>Georgi Marokov</Authors>
+    <Copyright>2021</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/rmcc13/trxtosonar</RepositoryUrl>
+    <RepositoryUrl>https://github.com/gmarokov/trxtosonar</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />

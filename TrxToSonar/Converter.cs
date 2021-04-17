@@ -46,7 +46,6 @@ namespace TrxToSonar
                 }
             }
 
-            // Merge
             return Merge(sonarDocuments);
         }
 
@@ -60,9 +59,11 @@ namespace TrxToSonar
 
             var result = new SonarDocument();
             foreach (SonarDocument sonarDocument in sonarDocuments)
-            foreach (File sonarFile in sonarDocument.Files)
             {
-                result.Files.Add(sonarFile);
+                foreach (File sonarFile in sonarDocument.Files)
+                {
+                    result.Files.Add(sonarFile);
+                }
             }
 
             return result;

@@ -1,10 +1,11 @@
-# TRX To Sonar(qube)
+# dotnet-trx2sonar
 
-[Forked from gregoryb/trxtosonar](https://github.com/gregoryb/trxtosonar)
+Basic dotnet core console app to convert Trx test result files to SonarCloud Generic Test Data (Generic Execution). 
+More info about Generic Test Data (here)[https://docs.sonarqube.org/latest/analysis/generic-test/]
 
-Basic dotnet core console app to convert TRX files to Sonarqube Generic Test Data (Generic Execution).
+## Installation 
 
-### Usage
+## Usage
 
 - `--help` `-h` `-?`
   Show the current help.
@@ -15,6 +16,8 @@ Basic dotnet core console app to convert TRX files to Sonarqube Generic Test Dat
 - `-a` `--absolute`  
   Use absolute path for Sonarqube file path.
 
-### TODO
-
-Add more tests.
+## Contribution
+- If you want to contribute to codes, create pull request
+- If you find any bugs or error, create an issue
+## License
+This project is licensed under the MIT License
