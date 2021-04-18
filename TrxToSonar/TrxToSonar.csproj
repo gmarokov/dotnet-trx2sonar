@@ -8,15 +8,15 @@
   </PropertyGroup>
   <PropertyGroup>
     <Description>
-      Dotnet tool for converting Trx test results files to SonarCloud Generic Test Data (Generic Execution).
+      Dotnet tool to convert Visual Studio TRX files to SonarCloud Generic Test Data - Generic Execution. 
     </Description>
     <PackageId>dotnet-trx2sonar</PackageId>
     <Authors>Georgi Marokov</Authors>
     <Copyright>2021</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/gmarokov/dotnet-trx2sonar</RepositoryUrl>
-    <projectUrl>https://github.com/gmarokov/dotnet-trx2sonar</projectUrl>
-    <tags>dotnet-tool, trx, sonarcloud</tags>
+    <ProjectUrl>https://github.com/gmarokov/dotnet-trx2sonar</ProjectUrl>
+    <Tags>dotnet-tool, trx, sonarcloud</Tags>
   </PropertyGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />

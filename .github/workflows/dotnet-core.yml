@@ -1,4 +1,4 @@
-name: Build .NET Core and Publish to GitHub/NuGet
+name: Build and Publish
 
 on:
   push:
@@ -42,6 +42,10 @@ jobs:
 
     - name: NuGet push on GitHub
       run: dotnet nuget push "**/*.nupkg" --source github --api-key ${{ secrets.GH_PAT }} --skip-duplicate
+    
+    #TODO: Trigger only on tag
+    - name: NuGet push on NuGet
+      run: dotnet nuget push "**/*.nupkg" --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
 
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2
@@ -50,8 +54,3 @@ jobs:
         name: artifacts
         # A file, directory or wildcard pattern that describes what to upload
         path: artifacts/*
-    
-    # - name: Install gpr
-    #   run: dotnet tool install gpr --global
-    # - name: gpr upload
-    #   run: find -name "*.nupkg" -print -exec gpr push -k ${{secrets.GH_PACKAGE}} {} \;
