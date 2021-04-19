@@ -42,16 +42,16 @@ jobs:
       run: dotnet pack --configuration Release --no-restore --output artifacts
     
     - name: Add NuGet sources
-      if: github.ref == 'refs/heads/master' || github.ref == 'refs/tags/*'
+      if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')
       run: |
         dotnet nuget add source https://nuget.pkg.github.com/${{ env.GITHUB_REPOSITORY_OWNER }}/index.json --name github
 
     - name: NuGet push on GitHub
-      if: github.ref == 'refs/heads/master' || github.ref == 'refs/tags/*'
+      if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')
       run: dotnet nuget push "**/*.nupkg" --source github --api-key ${{ secrets.GH_PAT }} --skip-duplicate
     
     - name: NuGet push on NuGet
-      if: github.ref == 'refs/tags/*'
+      if: startsWith(github.ref, 'refs/tags/')
       run: dotnet nuget push "**/*.nupkg" --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
 
     - name: Upload a Build Artifact
