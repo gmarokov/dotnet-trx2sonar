@@ -21,5 +21,6 @@
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="3.0.0" />
+    <PackageReference Include="MinVer" PrivateAssets="All" Version="2.3.0" />
   </ItemGroup>
 </Project>
