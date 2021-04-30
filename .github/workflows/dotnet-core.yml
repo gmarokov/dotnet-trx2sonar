@@ -12,7 +12,6 @@ on:
     branches: [ master ]
 
 env:
-  NETCORE_VERSION: '3.1.x'
   GITHUB_REPOSITORY_OWNER: 'gmarokov'
   NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
 
@@ -20,14 +19,16 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        dotnet: [ '3.1.x', '5.0.x' ]
     steps:
     - uses: actions/checkout@v2
 
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: ${{ env.NETCORE_VERSION }}
+          dotnet-version: ${{ matrix.dotnet }}
 
     - name: Install dependencies
       run: dotnet restore
