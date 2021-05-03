@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net5.0;netcoreapp3.1;netcoreapp2.2</TargetFrameworks>
+    <TargetFrameworks>net5.0;netcoreapp3.1;netcoreapp2.2;netcoreapp2.1</TargetFrameworks>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>dotnet-trx2sonar</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
@@ -19,6 +19,10 @@
     <ProjectUrl>https://github.com/gmarokov/dotnet-trx2sonar</ProjectUrl>
     <Tags>dotnet-tool, trx, sonarcloud</Tags>
   </PropertyGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
+  </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.2' ">
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
