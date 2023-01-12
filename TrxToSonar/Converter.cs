@@ -24,7 +24,7 @@ namespace TrxToSonar
             return _sonarParser.Save(sonarDocument, outputFilename);
         }
 
-        public SonarDocument Parse(string solutionDirectory, bool useAbsolutePath)
+        public SonarDocument Parse(string solutionDirectory, bool useAbsolutePath, bool usePDBFile)
         {
             if (string.IsNullOrEmpty(solutionDirectory) || !Directory.Exists(solutionDirectory))
             {
@@ -38,7 +38,7 @@ namespace TrxToSonar
             {
                 _logger.LogInformation($"Parsing: {trxFile}");
                 TrxDocument trxDocument = _trxParser.Deserialize(trxFile);
-                SonarDocument sonarDocument = Convert(trxDocument, solutionDirectory, useAbsolutePath);
+                SonarDocument sonarDocument = Convert(trxDocument, solutionDirectory, useAbsolutePath, usePDBFile);
 
                 if (sonarDocument != null)
                 {
@@ -69,7 +69,7 @@ namespace TrxToSonar
             return result;
         }
 
-        private SonarDocument Convert(TrxDocument trxDocument, string solutionDirectory, bool useAbsolutePath)
+        private SonarDocument Convert(TrxDocument trxDocument, string solutionDirectory, bool useAbsolutePath, bool usePDBFile)
         {
             var sonarDocument = new SonarDocument();
 
@@ -77,7 +77,7 @@ namespace TrxToSonar
             {
                 UnitTest unitTest = trxResult.GetUnitTest(trxDocument);
 
-                string testFile = unitTest.GetTestFile(solutionDirectory, useAbsolutePath);
+                string testFile = unitTest.GetTestFile(solutionDirectory, useAbsolutePath, usePDBFile);
 
                 File file = sonarDocument.GetFile(testFile);
 
