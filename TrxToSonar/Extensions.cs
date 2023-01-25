@@ -5,6 +5,13 @@ using TrxToSonar.Model.Sonar;
 using TrxToSonar.Model.Trx;
 using File = TrxToSonar.Model.Sonar.File;
 
+using System.Reflection.Metadata;
+using System.Reflection.PortableExecutable;
+using System.Text;
+using System.Reflection.Metadata.Ecma335;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+
 namespace TrxToSonar
 {
     public static class Extensions
@@ -20,9 +27,95 @@ namespace TrxToSonar
         {
             return sonarDocument.Files.FirstOrDefault(x => x.Path == testFile);
         }
-
-        public static string GetTestFile(this UnitTest unitTest, string solutionDirectory, bool useAbsolutePath)
+        public static string GetFilePathFromPDB(this UnitTest unitTest)
         {
+            String path = Path.ChangeExtension(unitTest.Storage, "pdb");
+            using FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+
+            List<String> files = ReadPdbDocuments(path);
+
+            foreach(String file in files.Distinct())
+            {
+                if (System.IO.File.Exists(file))
+                {
+                    String classname = unitTest.TestMethod.ClassName.Substring(unitTest.TestMethod.ClassName.LastIndexOf('.') + 1);
+                    String namespaceName = unitTest.TestMethod.ClassName.Substring(0, unitTest.TestMethod.ClassName.LastIndexOf('.'));
+                    namespaceName.Replace(".", "\\.");
+                    String code = System.IO.File.ReadAllText(file);
+                    Regex namespaceRegex = new Regex("namespace[\\s\\t]+"+ namespaceName);
+                    Regex classRegex = new Regex("public[\\s\\t]+class[\\s\\t]+"+ classname);
+                    Regex methodRegex = new Regex(unitTest.TestMethod.Name+"\\(\\)[\\s\\n\\r\\t]*\\{");
+                    if (namespaceRegex.IsMatch(code) && classRegex.IsMatch(code) && methodRegex.IsMatch(code))
+                    {
+                        return file;
+                    }
+                }
+            }
+            return "";
+        }
+
+        static string ReadDocumentPath(MetadataReader reader, Document doc)
+        {
+            BlobReader blob = reader.GetBlobReader(doc.Name);
+
+            // Read path separator character
+            char separator = (char) blob.ReadByte();
+            StringBuilder sb = new StringBuilder(blob.Length * 2);
+
+            // Read path segments
+            while (true)
+            {
+                BlobHandle bh = blob.ReadBlobHandle();
+
+                if (!bh.IsNil)
+                {
+                    byte[] nameBytes = reader.GetBlobBytes(bh);
+                    sb.Append(Encoding.UTF8.GetString(nameBytes));
+                }
+
+                if (blob.Offset >= blob.Length)
+                {
+                    break;
+                }
+
+                sb.Append(separator);
+            }
+
+            return sb.ToString();
+        }
+
+        public static List<String> ReadPdbDocuments(string pdbPath)
+        {
+            List<String> files = new List<String>();
+            // Open Portable PDB file
+            using FileStream fs = new FileStream(pdbPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            using MetadataReaderProvider provider = MetadataReaderProvider.FromPortablePdbStream(fs);
+            MetadataReader reader = provider.GetMetadataReader();
+            // Display information about documents in each MethodDebugInformation table entry
+            foreach (MethodDebugInformationHandle h in reader.MethodDebugInformation)
+            {
+                MethodDebugInformation mdi = reader.GetMethodDebugInformation(h);
+
+                if (mdi.Document.IsNil)
+                {
+                    continue;
+                }
+
+                int token = MetadataTokens.GetToken(h);
+
+                Document doc = reader.GetDocument(mdi.Document);
+                files.Add(ReadDocumentPath(reader, doc));
+            }
+            return files;
+        }
+
+        public static string GetTestFile(this UnitTest unitTest, string solutionDirectory, bool useAbsolutePath, bool usePDBFile)
+        {
+            if (usePDBFile && System.IO.File.Exists(Path.ChangeExtension(unitTest.Storage, "pdb")))
+            {
+                return unitTest.GetFilePathFromPDB();
+
+            }
             var className = unitTest?.TestMethod?.ClassName;
 
             if (string.IsNullOrEmpty(className))

@@ -26,6 +26,7 @@ namespace TrxToSonar
                 app.Option("-d", "Solution Directory to parse.", CommandOptionType.SingleValue);
             CommandOption outputOption = app.Option("-o", "Output filename.", CommandOptionType.SingleValue);
             CommandOption absolutePathOption = app.Option("-a|--absolute", "Use Absolute Path", CommandOptionType.NoValue);
+            CommandOption usePDBFileOption = app.Option("-p|--pdb", "Use pdb file", CommandOptionType.NoValue);
 
             app.OnExecute(
                 () =>
@@ -33,7 +34,7 @@ namespace TrxToSonar
                     if (solutionDirectoryOption.HasValue() && outputOption.HasValue())
                     {
                         var converter = serviceProvider.GetService<IConverter>();
-                        SonarDocument sonarDocument = converter.Parse(solutionDirectoryOption.Value(), absolutePathOption.HasValue());
+                        SonarDocument sonarDocument = converter.Parse(solutionDirectoryOption.Value(), absolutePathOption.HasValue(), usePDBFileOption.HasValue());
                         converter.Save(sonarDocument, outputOption.Value());
                     }
                     else
