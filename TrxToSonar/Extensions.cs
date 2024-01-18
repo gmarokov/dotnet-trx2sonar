@@ -38,13 +38,20 @@ namespace TrxToSonar
             {
                 if (System.IO.File.Exists(file))
                 {
+                    // In case test used [Random(0, 3000, 50)]
+                    // Method name is like RandomManyLoad(1732)
+                    // remove (1732) from name
+                    String methodName = unitTest.TestMethod.Name;
+                    if (unitTest.TestMethod.Name.Contains("("))
+                        methodName = unitTest.TestMethod.Name.Substring(0, unitTest.TestMethod.Name.IndexOf('('));
+
                     String classname = unitTest.TestMethod.ClassName.Substring(unitTest.TestMethod.ClassName.LastIndexOf('.') + 1);
                     String namespaceName = unitTest.TestMethod.ClassName.Substring(0, unitTest.TestMethod.ClassName.LastIndexOf('.'));
                     namespaceName.Replace(".", "\\.");
                     String code = System.IO.File.ReadAllText(file);
                     Regex namespaceRegex = new Regex("namespace[\\s\\t]+"+ namespaceName);
                     Regex classRegex = new Regex("public[\\s\\t]+class[\\s\\t]+"+ classname);
-                    Regex methodRegex = new Regex(unitTest.TestMethod.Name+"\\(\\)[\\s\\n\\r\\t]*\\{");
+                    Regex methodRegex = new Regex(methodName + "\\(.*\\)[\\s\\n\\r\\t]*\\{");
                     if (namespaceRegex.IsMatch(code) && classRegex.IsMatch(code) && methodRegex.IsMatch(code))
                     {
                         return file;
